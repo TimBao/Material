@@ -1,0 +1,36 @@
+syntax enable
+syntax on
+colorscheme desert
+
+set number
+set autoindent
+set autoread
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set ruler
+set showmatch
+set nobackup
+set noswapfile
+set hlsearch
+set incsearch
+set bs=2
+
+set cursorline
+set cursorcolumn
+set statusline=%h%=%-14.(%l,%c%V%)\%<%p%%\\\%{strftime('%y-%m-%d\ %A')}
+set encoding=utf-8
+set fileencodings=utf-8,gb2312,gbk,gb18030,latin-1
+set fileencoding=utf-8
+
+filetype on
+filetype plugin on
+
+let Tlist_Show_One_File=1
+let Tlist_Exit_OnlyWindow=1
+
+let g:winManagerWindowLayout='FileExplorer|TagList'
+nmap wm :WMToggle<cr>
+
+let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
