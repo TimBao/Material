@@ -34,3 +34,6 @@ let g:winManagerWindowLayout='FileExplorer|TagList'
 nmap wm :WMToggle<cr>
 
 let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
+
+"netrw setting
+nmap <silent> <leader>fe :Vexplore!<cr>
