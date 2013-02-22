@@ -32,6 +32,7 @@ let Tlist_Exit_OnlyWindow=1
 
 let g:winManagerWindowLayout='FileExplorer|TagList'
 nmap wm :WMToggle<cr>
+nmap fl :Tlist<cr>
 
 let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
 
