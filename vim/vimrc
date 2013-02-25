@@ -38,3 +38,6 @@ let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
 
 "netrw setting
 nmap <silent> <leader>fe :Vexplore!<cr>
+
+"search word in document
+nnoremap <silent> <F3> :lv /\<<c-r>=expand("<cword>")<cr>\>/j %<cr>:lw<cr>
