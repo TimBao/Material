@@ -41,3 +41,7 @@ nmap <silent> <leader>fe :Vexplore!<cr>
 
 "search word in document
 nnoremap <silent> <F3> :lv /\<<c-r>=expand("<cword>")<cr>\>/j %<cr>:lw<cr>
+
+"compile single file
+au FileType c set makeprg=gcc\ %
+au FIleType cpp set makeprg=g++ %
