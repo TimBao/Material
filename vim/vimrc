@@ -47,6 +47,7 @@ au FileType c set makeprg=gcc\ %
 au FIleType cpp set makeprg=g++ %
 
 nmap <leader>ee :e ~/.vimrc<cr>
+nnoremap <C-TAB> <C-W>w
 
 function AddTitle()
     call append(0,"/*=============================================================================")
