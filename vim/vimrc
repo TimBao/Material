@@ -8,7 +8,8 @@ set autoread
 set smartindent
 set tabstop=4
 set shiftwidth=4
-set expandtab
+set expandtab "if want to insert tab, on insert mode, <C-V>, tab
+set list listchars=tab:>- ":retab
 set ruler
 set showmatch
 set nobackup
