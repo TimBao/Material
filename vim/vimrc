@@ -66,6 +66,17 @@ au FIleType cpp set makeprg=g++ %
 nmap <leader>ee :e ~/.vimrc<cr>
 nnoremap <C-TAB> <C-W>w
 
+if has("win32")
+    au GUIEnter * simalt ~x
+else
+    au GUIEnter * call MaximizeWindow()
+endif
+
+function! MaximizeWindow()
+    "wmctrl need install.
+    silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
+endfunction
+
 function AddTitle()
     call append(0,"/*=============================================================================")
     call append(1,"#")
