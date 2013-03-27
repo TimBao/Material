@@ -10,6 +10,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab "if want to insert tab, on insert mode, <C-V>, tab
 set list listchars=tab:>- ":retab
+
 set ruler
 set showmatch
 set nobackup
@@ -42,6 +43,21 @@ nmap <silent> <leader>fe :Vexplore!<cr>
 
 "search word in document
 nnoremap <silent> <F3> :lv /\<<c-r>=expand("<cword>")<cr>\>/j %<cr>:lw<cr>
+
+"ConqueTerm setting
+noremap <leader>sh :ConqueTerm bash<cr>
+noremap <leader>shs :ConqueTermSplit bash<cr>
+noremap <leader>shv :ConqueTermVSplit bash<cr>
+noremap <leader>sht :ConqueTermTab bash<cr>
+" Enable colors. Setting this to 0 will make your terminal faster.
+let g:ConqueTerm_Color = 1
+" Set your terminal type. I strong recommend leaving this as vt100, 
+" however more features may be enabled with xterm.
+let g:ConqueTerm_TERM = 'xterm' 
+" Set buffer syntax. Conque has highlighting for MySQL, but not much else.
+let g:ConqueTerm_Syntax = 'conque'
+" Continue updating shell when it's not the current, focused buffer
+let g:ConqueTerm_ReadUnfocused = 1
 
 "compile single file
 au FileType c set makeprg=gcc\ %
