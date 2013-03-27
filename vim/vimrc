@@ -28,6 +28,7 @@ set fileencoding=utf-8
 
 filetype on
 filetype plugin on
+let mapleader = ","
 
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
