@@ -9,6 +9,9 @@ public:
 
 private:
     double TimeDuration(struct timeval start, struct timeval stop);
+    // Disable "evil" constructor
+    DebugUtility(const DebugUtility&);
+    void operator=(const DebugUtility&);
 
     struct timeval m_startTime;
     struct timeval m_stopTime;
@@ -21,3 +24,14 @@ double DebugUtility::TimeDuration(struct timeval start, struct timeval stop)
     double mStop = (double)stop.tv_sec*1000000 + (double)stop.tv_usec;
     return mStop - mStart;
 }
+
+DebugUtility::DebugUtility(const DebugUtility& du)
+{
+
+}
+
+void operator=(const DebugUtility& du)
+{
+
+}
+
