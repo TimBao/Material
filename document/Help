@@ -12,3 +12,9 @@
 
 5. See disk space used.
    commad: df -h
+
+6. Open pdf document command.  
+   gnome-open name.pdf
+
+7. make a soft link.
+   ln -s /path/name /topath
