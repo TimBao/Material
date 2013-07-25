@@ -18,3 +18,5 @@
 
 7. make a soft link.
    ln -s /path/name /topath
+
+8. help doc path:  /usr/share/doc/
