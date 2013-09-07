@@ -20,3 +20,6 @@
    ln -s /path/name /topath
 
 8. help doc path:  /usr/share/doc/
+
+9. Install chinese input method in ubuntu.
+
