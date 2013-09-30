@@ -4,7 +4,7 @@
 
 1. Install Homebrwe [http://brew.sh/](http://brew.sh/ "Homebrew")
    1. brew is a usefull tool on Mac OS X platform as apt-get on Ubuntu. Install or Uninstall other tools.
-   2. `udo chown -R $USER:staff /usr/local`
+   2. `sudo chown -R $USER:staff /usr/local`
       `ruby -e "$(curl -x 127.0.0.1:8087 -kL https://raw.github.com/mxcl/homebrew/go)"`
       `In china, must use agent to download.`
 
