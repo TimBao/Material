@@ -9,10 +9,11 @@
 ## How to sign apk?
 1. generate your own keystore file.
 2. open `build.xml` to add 
-    <!-- sign for apk -->
-    <property name="has.keystore" value="true" />
-    <property name="has.password" value="true" />
-    <property name="key.store" value="xx.keystore" />
-    <property name="key.alias" value="xx.keystore" />
-    <property name="key.store.password" value="xxxx" />
-    <property name="key.alias.password" value="xxxx" />
+
+>    <!-- sign for apk -->
+>    <property name="has.keystore" value="true" />
+>    <property name="has.password" value="true" />
+>    <property name="key.store" value="xx.keystore" />
+>    <property name="key.alias" value="xx.keystore" />
+>    <property name="key.store.password" value="xxxx" />
+>    <property name="key.alias.password" value="xxxx" />
