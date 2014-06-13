@@ -28,7 +28,7 @@ class Block
 {
 public:
     Block(Shape shape, int left, int top) : m_shape(shape), m_left(left), m_top(top) {}
-    virtual ~Block();
+    virtual ~Block() {}
 
     Shape GetShape() { return m_shape; }
     int GetLeft() { return m_left; }
@@ -62,10 +62,33 @@ private:
 class Mask
 {
 public:
-    Mask();
-    virtual ~Mask ();
+    Mask()
+    {
+        //TODO: init board
+        //bzero
+    }
+    virtual ~Mask () {}
 
-    void Print();
+    void Set(int value, int left, int top)
+    {
+    }
+
+    bool IsEmpty(int left, int top)
+    {
+        //TODO: assert
+    }
+
+    void Print()
+    {
+        int i = 0; i < ROW; ++i)
+        {
+            for (int j = 0; j < COL; ++j)
+            {
+                printf(" %c",  m_board[i][j] + '0');
+            }
+            printf("\n");
+        }
+    }
 private:
     unsigned int m_board[ROW][COL];
 };
@@ -74,6 +97,7 @@ Struct CompMask
 {
     bool operator() (const Mast& lhs, const Mask& rhs) const
     {
+        //TODO: memcmp
     }
 };
 
@@ -165,7 +189,6 @@ int main(int argc, const char *argv[])
                 queue.push_back(*it);
             }
         }
-
     }
 
     return 0;
