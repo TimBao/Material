@@ -1,13 +1,18 @@
+#include <queue>
+#include <set>
+#include <vector>
+#include <pair>
+#include <string.h> //memcmp
 
-//unsigned int board[5][4] =
-//{
-//   //0, 1, 2, 3
-//    {1, 2, 2, 3}, //0
-//    {1, 2, 2, 3}, //1
-//    {4, 5, 5, 6}, //2
-//    {4, 7, 8, 6}, //3
-//    {9, 0, 0, 10},//4
-//}
+unsigned int board[5][4] =
+{
+   //0, 1, 2, 3
+    {1, 2, 2, 3}, //0
+    {1, 2, 2, 3}, //1
+    {4, 5, 5, 6}, //2
+    {4, 7, 8, 6}, //3
+    {9, 0, 0, 10},//4
+}
 
 const unsigned int ROW = 5;
 const unsigned int COL = 4;
@@ -50,7 +55,7 @@ public:
         m_mask.Print();
     }
 
-    void Mask(int value, Mask* mask);
+    void mask(int value, Mask* mask);
 private:
     Shape m_shape;
 
@@ -64,13 +69,13 @@ class Mask
 public:
     Mask()
     {
-        //TODO: init board
-        //bzero
+        memset(m_board, 0, sizeof(board));
     }
     virtual ~Mask () {}
 
     void Set(int value, int left, int top)
     {
+        //TODO:
     }
 
     bool IsEmpty(int left, int top)
@@ -89,7 +94,7 @@ public:
             printf("\n");
         }
     }
-private:
+
     unsigned int m_board[ROW][COL];
 };
 
@@ -97,7 +102,7 @@ Struct CompMask
 {
     bool operator() (const Mast& lhs, const Mask& rhs) const
     {
-        //TODO: memcmp
+        memcmp(lhs.m_board, rhs.m_board, sizeof(board));
     }
 };
 
@@ -118,7 +123,7 @@ public:
         Mask temp;
         for (i = 0; i < 10; i++)
         {
-            m_blocks[i].Mask(static_cast<int>(m_blocks[i].m_shape), &temp);
+            m_blocks[i].mask(static_cast<int>(m_blocks[i].m_shape), &temp);
         }
         return temp;
     }
