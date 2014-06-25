@@ -1,200 +1,308 @@
-#include <queue>
-#include <set>
+//This is copyed from chenshuo's codes. which is located at
+//https://github.com/chenshuo/recipes/blob/master/puzzle/huarong.cc
+//I have to build it at vs2012 on win32 platform. And use set instead of unsorted_set. And gen hash code by myself.
+//The result is 116 steps.
+#include <deque>
+#include <type_traits>
+#include <unordered_set>
 #include <vector>
-#include <pair>
-#include <string.h> //memcmp
 
-unsigned int board[5][4] =
+#include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <set>
+#include <functional>
+
+int board[5][4] = {
+    // 0 1 2 3
+    { 1,  2,  2,  3,  },  // 0
+    { 1,  2,  2,  3,  },  // 1
+    { 4,  5,  5,  6,  },  // 2
+    { 4,  7,  8,  6,  },  // 3
+    { 9,  0,  0,  10 } };  // 4
+
+struct Mask;
+
+const int kRows = 5;
+const int kColumns = 4;
+const int kBlocks = 10;
+
+enum class Shape
 {
-   //0, 1, 2, 3
-    {1, 2, 2, 3}, //0
-    {1, 2, 2, 3}, //1
-    {4, 5, 5, 6}, //2
-    {4, 7, 8, 6}, //3
-    {9, 0, 0, 10},//4
-}
-
-const unsigned int ROW = 5;
-const unsigned int COL = 4;
-const unsigned int BLOCKS = 10;
-
-enum Shape
-{
-    Invalid = 0,
-    Vertical,
-    Horizontal,
-    Square,
-    Single
-}
-
-class Mask;
-
-class Block
-{
-public:
-    Block(Shape shape, int left, int top) : m_shape(shape), m_left(left), m_top(top) {}
-    virtual ~Block() {}
-
-    Shape GetShape() { return m_shape; }
-    int GetLeft() { return m_left; }
-    int GetTop() { return m_top; }
-    int GetBottom()
-    {
-        unsigned int mask[] = {0, 1, 0, 1, 0};
-        return m_top + mask[static_cast<int>(m_shape)];
-    }
-
-    int GetRight()
-    {
-        unsigned int mask[] = {0, 0, 1, 1, 0};
-        return m_left + mask[static_cast<int>(m_shape)];
-    }
-
-    void Print()
-    {
-        m_mask.Print();
-    }
-
-    void mask(int value, Mask* mask);
-private:
-    Shape m_shape;
-
-    int left;
-    int top;
-
+    kInvalid,
+    kSingle,
+    kHorizon,
+    kVertical,
+    kSquare,
 };
 
-class Mask
+struct Block
 {
-public:
+    Shape shape;
+    int left, top;
+
+    Block()
+        : shape(Shape::kInvalid),
+        left(-1),
+        top(-1)
+    {
+    }
+
+    Block(Shape s,  int left,  int top)
+        : shape(s),
+        left(left),
+        top(top)
+    {
+        assert(shape != Shape::kInvalid);
+        assert(left  >=  0  &&  left < kColumns);
+        assert(top  >=  0  &&  top < kRows);
+    }
+
+    int bottom() const
+    {
+        const static int delta[] = { 0,  0,  0,  1,  1,  };
+        assert(shape != Shape::kInvalid);
+        return top + delta[static_cast<int>(shape)];
+    }
+
+    int right() const
+    {
+        const static int delta[] = { 0,  0,  1,  0,  1,  };
+        assert(shape != Shape::kInvalid);
+        return left + delta[static_cast<int>(shape)];
+    }
+
+    void mask(int value,  Mask* mask) const;
+};
+
+struct Mask
+{
     Mask()
     {
-        memset(m_board, 0, sizeof(board));
-    }
-    virtual ~Mask () {}
-
-    void Set(int value, int left, int top)
-    {
-        //TODO:
+        memset(board_,  '\0',  sizeof(board_));
     }
 
-    bool IsEmpty(int left, int top)
+    bool operator == (const Mask& rhs) const
     {
-        //TODO: assert
+        return memcmp(board_,  rhs.board_,  sizeof board_)  ==  0;
     }
 
-    void Print()
+    size_t hashValue() const
     {
-        int i = 0; i < ROW; ++i)
+        char temp[21] = {0};
+        for (int i = 0;  i < kRows;  ++i)
         {
-            for (int j = 0; j < COL; ++j)
+            for (int j = 0;  j < kColumns;  ++j)
             {
-                printf(" %c",  m_board[i][j] + '0');
+                sprintf(&temp[i*4 + j],  "%c",  board_[i][j] + '0');
+            }
+        }
+        size_t hash = 0;
+        int i = 0;
+
+        for (;  i < 20;  ++i)
+        {
+            hash  +=  temp[i];
+            hash  +=  (hash  <<  10);
+            hash ^= (hash  >>  6);
+        }
+
+        hash  +=  (hash  <<  3);
+        hash ^= (hash  >>  11);
+        hash  +=  (hash  <<  15);
+        printf("string = %s,  hashcode=%d\n",  temp,  hash);
+        return hash;
+    }
+
+    void print() const
+    {
+        for (int i = 0;  i < kRows;  ++i)
+        {
+            for (int j = 0;  j < kColumns;  ++j)
+            {
+                printf(" %c",  board_[i][j] + '0');
             }
             printf("\n");
         }
     }
 
-    unsigned int m_board[ROW][COL];
+    void set(int value,  int y,  int x)
+    {
+        assert(value > 0);
+        assert(x  >=  0  &&  x < kColumns);
+        assert(y  >=  0  &&  y < kRows);
+        assert(board_[y][x]  ==  0);
+        board_[y][x] = value;
+    }
+
+    bool empty(int y,  int x) const
+    {
+        assert(x  >=  0  &&  x < kColumns);
+        assert(y  >=  0  &&  y < kRows);
+        return board_[y][x]  ==  0;
+    }
+
+    private:
+    int board_[kRows][kColumns];
 };
 
-Struct CompMask
+namespace std
 {
-    bool operator() (const Mast& lhs, const Mask& rhs) const
+    template<> struct hash<Mask>
     {
-        memcmp(lhs.m_board, rhs.m_board, sizeof(board));
-    }
-};
+        size_t operator()(const Mask& x) const
+        {
+            return x.hashValue();
+        }
+    };
+}
 
-class State
+inline void Block::mask(int value,  Mask* mask) const
 {
-public:
-    State() { m_step = 0; }
-    virtual ~State ();
-
-    bool IsSolved()
+    mask->set(value,  top,  left);
+    switch (shape)
     {
-        Block cc = m_blocks[1];
-        return cc.GetLeft() == 1 and cc.GetTop() == 3;
+    case Shape::kHorizon:
+        mask->set(value,  top,  left+1);
+        break;
+    case Shape::kVertical:
+        mask->set(value,  top+1,  left);
+        break;
+    case Shape::kSquare:
+        mask->set(value,  top,  left+1);
+        mask->set(value,  top+1,  left);
+        mask->set(value,  top+1,  left+1);
+        break;
+    default:
+        assert(shape  ==  Shape::kSingle);
+        ;
     }
+}
 
-    Mask ToMask()
-    {
-        Mask temp;
-        for (i = 0; i < 10; i++)
-        {
-            m_blocks[i].mask(static_cast<int>(m_blocks[i].m_shape), &temp);
-        }
-        return temp;
-    }
-
-    std::vector<State> Moves()
-    {
-        //up
-        //down
-        //left
-        //right
-    }
-
-    void Print()
-    {
-        for (i = 0; i < 10; i++)
-        {
-            m_blocks[i].Print();
-        }
-    }
-
-    Block m_blocks[BLOCKS];
-    int m_step;
-};
-
-int main(int argc, const char *argv[])
+struct State
 {
-    std::queue<State> queue;
-    std::set<Mask, CompMask> seen;
-
-    State initState;
-    initState.m_blocks[0] = Block(Shape::Vertical, 0, 0);
-    initState.m_blocks[1] = Block(Shape::Square,   1, 0);
-    initState.m_blocks[2] = Block(Shape::Vertical, 3, 0);
-    initState.m_blocks[3] = Block(Shape::Vertical, 0, 2);
-    initState.m_blocks[4] = Block(Shape::Horizontal, 1, 2);
-    initState.m_blocks[5] = Block(Shape::Vertical, 3, 2);
-    initState.m_blocks[6] = Block(Shape::Single,   0, 4);
-    initState.m_blocks[7] = Block(Shape::Single,   1, 3);
-    initState.m_blocks[8] = Block(Shape::Single,   2, 3);
-    initState.m_blocks[9] = Block(Shape::Single,   3, 4);
-
-    queue.push_back(initState);
-    seen.insert(initState.ToMask());
-
-    while(!queue.empty())
+    State()
     {
-        State currentState = queue.front();
-        queue.pop();
-
-        if (currentState.IsSolved())
+        step = 0;
+    }
+    Mask toMask() const
+    {
+        Mask m;
+        for (int i = 0;  i < kBlocks;  ++i)
         {
-            currentState.Print();
-            return;
+            Block b = blocks_[i];
+            b.mask(static_cast<int>(b.shape),  &m);
         }
+        return m;
+    }
 
-        if (currentState.m_step > 200)
-        {
-            return;
-        }
+    bool isSolved() const
+    {
+        // FIXME: magic number
+        Block square = blocks_[1];
+        assert(square.shape  ==  Shape::kSquare);
+        return (square.left  ==  1  &&  square.top  ==  3);
+    }
 
-        std::vector<State> nexts = currentState.Moves();
-        std::vector<State>::iterator it = nexts.begin();
-        for (; it != nexts.end(); ++it)
+    template<typename FUNC>
+        void move(const FUNC& func) const
         {
-            std::pair<std::set<State>::iterator, bool> ret = seen.insert((*it).ToMask());
-            if (ret.second)
+            static_assert(std::is_convertible<FUNC,  std::function<void(const State&) >> ::value,
+                    "func must be callable with a 'const State&' parameter.");
+            const Mask mask = toMask();
+
+            for (int i = 0;  i < kBlocks;  ++i)
             {
-                queue.push_back(*it);
+                Block b = blocks_[i];
+
+                // move up
+                if (b.top > 0  &&  mask.empty(b.top-1,  b.left)
+                        &&  mask.empty(b.top-1,  b.right()))
+                {
+                    State next = *this;
+                    next.step++;
+                    next.blocks_[i].top--;
+                    func(next);
+                }
+
+                // move down
+                if (b.bottom() < kRows-1  &&  mask.empty(b.bottom()+1,  b.left)
+                        &&  mask.empty(b.bottom()+1,  b.right()))
+                {
+                    State next = *this;
+                    next.step++;
+                    next.blocks_[i].top++;
+                    func(next);
+                }
+
+                // move left
+                if (b.left > 0  &&  mask.empty(b.top,  b.left-1)
+                        &&  mask.empty(b.bottom(),  b.left-1))
+                {
+                    State next = *this;
+                    next.step++;
+                    next.blocks_[i].left--;
+                    func(next);
+                }
+
+                // move right
+                if (b.right() < kColumns-1  &&  mask.empty(b.top,  b.right()+1)
+                        &&  mask.empty(b.bottom(),  b.right()+1))
+                {
+                    State next = *this;
+                    next.step++;
+                    next.blocks_[i].left++;
+                    func(next);
+                }
             }
         }
-    }
 
-    return 0;
+    Block blocks_[kBlocks];
+    int step;
+};
+
+int main()
+{
+    std::unordered_set<Mask> seen;
+    std::deque<State> queue;
+
+    State initial;
+    initial.blocks_[0] = Block(Shape::kVertical,  0,  0);
+    initial.blocks_[1] = Block(Shape::kSquare,  1,  0);
+    initial.blocks_[2] = Block(Shape::kVertical,  3,  0);
+    initial.blocks_[3] = Block(Shape::kVertical,  0,  2);
+    initial.blocks_[4] = Block(Shape::kHorizon,  1,  2);
+    initial.blocks_[5] = Block(Shape::kVertical,  3,  2);
+    initial.blocks_[6] = Block(Shape::kSingle,  1,  3);
+    initial.blocks_[7] = Block(Shape::kSingle,  2,  3);
+    initial.blocks_[8] = Block(Shape::kSingle,  0,  4);
+    initial.blocks_[9] = Block(Shape::kSingle,  3,  4);
+
+    queue.push_back(initial);
+    seen.insert(initial.toMask());
+
+    while (!queue.empty())
+    {
+        const State curr = queue.front();
+        queue.pop_front();
+
+        if (curr.isSolved())
+        {
+            printf("found solution with %d steps\n",  curr.step);
+            curr.toMask().print();
+            break;
+        }
+        else if (curr.step > 200)
+        {
+            printf("too many steps.\n");
+            break;
+        }
+
+        curr.move([&seen,  &queue](const State& next) {
+                auto result = seen.insert(next.toMask());
+                if (result.second)
+                queue.push_back(next);
+                });
+    }
 }
