@@ -1,0 +1,4 @@
+             Director
+             Scene
+             Layer
+             Sprite
