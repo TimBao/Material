@@ -31,4 +31,9 @@
     ==> Installation successful!
     You should run `brew doctor' *before* you install anything.
     Now type: brew help
-     
+
+
+## vimium plugin for google chrome on mac OS X
+  A: vimium plugin could not work correctly on mac OS X for chrome?
+  Q: use `inspect devices` tools to see the runtime error. Find that the vimium do not have permission to access hosts to get URL from google*.
+  So reopen the chrome use sudo to get admistrater priority, it works fine.
