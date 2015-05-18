@@ -37,3 +37,5 @@
   A: vimium plugin could not work correctly on mac OS X for chrome?
   Q: use `inspect devices` tools to see the runtime error. Find that the vimium do not have permission to access hosts to get URL from google*.
   So reopen the chrome use sudo to get admistrater priority, it works fine.
+
+2. open source crypt library: libgcrypt
